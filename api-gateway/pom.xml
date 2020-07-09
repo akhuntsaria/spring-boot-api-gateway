@@ -16,11 +16,22 @@
 
     <properties>
         <java.version>14</java.version>
+        <jaxb.version>2.3.1</jaxb.version>
         <jwt.version>1.1.1.RELEASE</jwt.version>
         <spring-boot.version>2.2.3.RELEASE</spring-boot.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
@@ -36,7 +47,6 @@
             <artifactId>spring-security-jwt</artifactId>
             <version>${jwt.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>
