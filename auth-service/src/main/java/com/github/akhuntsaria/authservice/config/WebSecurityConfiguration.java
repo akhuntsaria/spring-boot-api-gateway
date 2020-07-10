@@ -28,7 +28,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         auth.inMemoryAuthentication()
-                .withUser("user").password(encoder.encode("password")).roles(UserRole.USER.name());
+                .withUser("username").password(encoder.encode("password")).roles(UserRole.USER.name());
     }
 
     @Override
@@ -42,9 +42,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint((request, response, ex) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
         .and()
-                .addFilterAfter(new AuthenticationFilter(signingKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), signingKey), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/auth/login").permitAll()
                 .anyRequest().authenticated();
     }
 }
