@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 
 public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
+    public static final String HEADER = "Authorization";
+
+    public static final String HEADER_VALUE_PREFIX = "Bearer";
+
     private final String signingKey;
 
     public JwtUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, String signingKey) {
@@ -48,8 +52,8 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(8 * 60 * 60))) // token expires in 8 hours
-                .signWith(SignatureAlgorithm.HS256, signingKey)
+                .signWith(SignatureAlgorithm.HS256, signingKey.getBytes())
                 .compact();
-        response.addHeader(AuthenticationFilter.HEADER, AuthenticationFilter.HEADER_VALUE_PREFIX + " " + token);
+        response.addHeader(HEADER, HEADER_VALUE_PREFIX + " " + token);
     }
 }

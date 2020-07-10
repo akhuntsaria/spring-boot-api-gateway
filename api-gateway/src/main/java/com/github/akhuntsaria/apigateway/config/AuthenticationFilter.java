@@ -1,4 +1,4 @@
-package com.github.akhuntsaria.authservice.config;
+package com.github.akhuntsaria.apigateway.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -28,9 +28,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse rsp, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String token = req.getHeader(HEADER);
+        String token = request.getHeader(HEADER);
 
         if (token != null) {
             token = token.replace(HEADER_VALUE_PREFIX + " ", "");
@@ -54,6 +54,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        filterChain.doFilter(req, rsp);
+        filterChain.doFilter(request, response);
     }
 }
