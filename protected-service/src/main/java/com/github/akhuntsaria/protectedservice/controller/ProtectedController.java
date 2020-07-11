@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/v1/protected")
+@RequestMapping("/v1/protected")
 public class ProtectedController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)

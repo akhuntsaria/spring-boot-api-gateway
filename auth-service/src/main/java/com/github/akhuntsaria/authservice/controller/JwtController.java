@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth/v1/jwt")
+@RequestMapping("/v1/jwt")
 public class JwtController {
 
     private final Logger log = LoggerFactory.getLogger(JwtController.class);

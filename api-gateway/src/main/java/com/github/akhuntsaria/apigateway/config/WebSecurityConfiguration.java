@@ -14,6 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    private final AuthenticationFilter authenticationFilter;
+
+    public WebSecurityConfiguration(AuthenticationFilter authenticationFilter) {
+        this.authenticationFilter = authenticationFilter;
+    }
+
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         http
@@ -24,7 +30,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .and()
                 .exceptionHandling().authenticationEntryPoint((request, response, ex) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
         .and()
-                .addFilterAfter(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                     .antMatchers("/auth/**").permitAll()
                     .anyRequest().hasRole(UserRole.USER.name());
