@@ -27,7 +27,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
     private final String signingKey;
 
     public JwtUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, String signingKey) {
-        super(new AntPathRequestMatcher("/auth/login", "POST"));
+        super(new AntPathRequestMatcher("/auth/v1/login", "POST"));
         setAuthenticationManager(authenticationManager);
         this.signingKey = signingKey;
     }

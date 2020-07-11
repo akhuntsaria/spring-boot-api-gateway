@@ -2,6 +2,5 @@
 * Fix dependency alert
 * Call auth-service from protected-service to validate requests
 * Don't hardcode service URL's, use discovery
-* Add /api/v1 to all URLs
 * Validate JWT token only in auth-service
 * Description of services after they are done 
