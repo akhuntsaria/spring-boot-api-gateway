@@ -43,6 +43,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), signingKey), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/auth/v1/login").permitAll()
+                .antMatchers("/auth/v1/jwt/parse").permitAll()
                 .anyRequest().authenticated();
     }
 }

@@ -14,13 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final String signingKey;
-
-    @Autowired
-    public WebSecurityConfiguration(@Value("${security.jwt.signing-key}") String signingKey) {
-        this.signingKey = signingKey;
-    }
-
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         http
@@ -31,7 +24,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .and()
                 .exceptionHandling().authenticationEntryPoint((request, response, ex) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
         .and()
-                .addFilterAfter(new AuthenticationFilter(signingKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                     .antMatchers("/auth/**").permitAll()
                     .anyRequest().hasRole(UserRole.USER.name());

@@ -1,10 +1,11 @@
 package com.github.akhuntsaria.apigateway.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import com.github.akhuntsaria.apigateway.dto.JwtParseRequestDto;
+import com.github.akhuntsaria.apigateway.dto.JwtParseResponseDto;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -12,7 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AuthenticationFilter extends OncePerRequestFilter {
@@ -21,11 +22,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     public static final String HEADER_VALUE_PREFIX = "Bearer";
 
-    private final String signingKey;
-
-    public AuthenticationFilter(String signingKey) {
-        this.signingKey = signingKey;
-    }
+    private static final String JWT_PARSE_URL = "http://localhost:8081/auth/v1/jwt/parse";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,24 +33,28 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             token = token.replace(HEADER_VALUE_PREFIX + " ", "");
 
             try {
-                Claims claims = Jwts.parser()
-                        .setSigningKey(signingKey.getBytes())
-                        .parseClaimsJws(token)
-                        .getBody();
-                String username = claims.getSubject();
+                JwtParseResponseDto responseDto = parseJwt(token);
 
-                //noinspection unchecked
-                List<String> authorities = claims.get("authorities", List.class);
-                if (username != null) {
-                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
-                            authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                }
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                        responseDto.getUsername(),
+                        null,
+                        responseDto.getAuthorities().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())
+                );
+                SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception ignore) {
                 SecurityContextHolder.clearContext();
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private JwtParseResponseDto parseJwt(String token) {
+        RestTemplate restTemplate = new RestTemplate();
+        JwtParseResponseDto responseDto = restTemplate.postForObject(JWT_PARSE_URL, new JwtParseRequestDto(token),
+                JwtParseResponseDto.class);
+
+        Objects.requireNonNull(responseDto);
+        return responseDto;
     }
 }

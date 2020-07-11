@@ -34,6 +34,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+
         return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(
                 request.getParameter("username"),
                 request.getParameter("password"),
