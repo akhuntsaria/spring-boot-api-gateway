@@ -1,8 +1,11 @@
 ### Login
 POST http://localhost:8080/auth/v1/login
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-username=username&password=password
+{
+  "username": "username",
+  "password": "password"
+}
 
 > {%
     client.global.set("authorizationHeaderValue", response.headers.valueOf("Authorization"));

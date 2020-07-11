@@ -1,5 +1,7 @@
 package com.github.akhuntsaria.authservice.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.akhuntsaria.authservice.dto.LoginDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +15,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
@@ -33,11 +36,14 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException, IOException {
+
+        LoginDto loginDto = new ObjectMapper().readValue(request.getInputStream(), LoginDto.class);
 
         return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(
-                request.getParameter("username"),
-                request.getParameter("password"),
+                loginDto.getUsername(),
+                loginDto.getPassword(),
                 Collections.emptyList()
         ));
     }
